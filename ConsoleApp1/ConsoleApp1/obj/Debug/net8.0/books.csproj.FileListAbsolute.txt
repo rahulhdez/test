@@ -1,0 +1,14 @@
+C:\test\books\ConsoleApp1\ConsoleApp1\obj\Debug\net8.0\books.GeneratedMSBuildEditorConfig.editorconfig
+C:\test\books\ConsoleApp1\ConsoleApp1\obj\Debug\net8.0\books.AssemblyInfoInputs.cache
+C:\test\books\ConsoleApp1\ConsoleApp1\obj\Debug\net8.0\books.AssemblyInfo.cs
+C:\test\books\ConsoleApp1\ConsoleApp1\obj\Debug\net8.0\books.csproj.CoreCompileInputs.cache
+C:\test\books\ConsoleApp1\ConsoleApp1\bin\Debug\net8.0\books.exe
+C:\test\books\ConsoleApp1\ConsoleApp1\bin\Debug\net8.0\books.deps.json
+C:\test\books\ConsoleApp1\ConsoleApp1\bin\Debug\net8.0\books.runtimeconfig.json
+C:\test\books\ConsoleApp1\ConsoleApp1\bin\Debug\net8.0\books.dll
+C:\test\books\ConsoleApp1\ConsoleApp1\bin\Debug\net8.0\books.pdb
+C:\test\books\ConsoleApp1\ConsoleApp1\obj\Debug\net8.0\books.dll
+C:\test\books\ConsoleApp1\ConsoleApp1\obj\Debug\net8.0\refint\books.dll
+C:\test\books\ConsoleApp1\ConsoleApp1\obj\Debug\net8.0\books.pdb
+C:\test\books\ConsoleApp1\ConsoleApp1\obj\Debug\net8.0\books.genruntimeconfig.cache
+C:\test\books\ConsoleApp1\ConsoleApp1\obj\Debug\net8.0\ref\books.dll
