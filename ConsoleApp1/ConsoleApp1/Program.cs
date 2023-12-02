@@ -9,27 +9,29 @@ internal class Books
     {
         var isbns = get_isbn(@"C:\test\ISBN_Input_File.txt", ',');
 
-        if (isbns.Length > 0)
+        if (isbns.Length <= 0)
+            return;
+
+        List<Book> books = new List<Book>();
+
+        foreach (string isbn in isbns)
         {
-            List<Book> books = new List<Book>();
+            if (getBookCache(ref books, isbn))
+                continue;
 
-            foreach (string isbn in isbns)
-            {
+            Response r = await GetInfo(isbn);
+            if (!r.valid)
+                continue;
                 
-                if (!getBookCache(ref books, isbn))
-                {
-                    Response r = await GetInfo(isbn);
-                    if (r.valid)
-                    {
-                        string json = await r.response.Content.ReadAsStringAsync();
-                        var book = saveBook(json, isbn);
-                        books.Add(book);
-                    }
-                }
-            }
-
-            saveCSV(books);
+            string json = await r.response.Content.ReadAsStringAsync();
+            var book = saveBook(json, isbn);
+            books.Add(book);
+                
+                
         }
+
+        saveCSV(books);
+        
     }
 
     private static void saveCSV(List<Book> books)
@@ -60,14 +62,15 @@ internal class Books
         {
             foreach (Book b in books)
             {
-                if (b.isbn == isbn)
-                {
-                    books.Add(new Book { isbn = isbn, isCache=ENUM.Cache, title=b.title, subtitle = b.subtitle, number_of_pages = b.number_of_pages, publish_date = b.publish_date, authors_line = b.authors_line});
+                if (b.isbn != isbn)
+                    continue;
 
-                    found = true;
-                    break;
+                books.Add(new Book { isbn = isbn, isCache=ENUM.Cache, title=b.title, subtitle = b.subtitle, number_of_pages = b.number_of_pages, publish_date = b.publish_date, authors_line = b.authors_line});
 
-                }
+                found = true;
+                break;
+
+                
             }
             if (found)
                 return true;
@@ -124,6 +127,7 @@ internal class Books
         var authors = book[0]["authors"];
         _ret.number_of_pages = book[0].ContainsKey("number_of_pages") ? book[0]["number_of_pages"] : 0;
         _ret.publish_date = book[0].ContainsKey("publish_date") ? book[0]["publish_date"] : "Not found";
+        //_ret.publish_date = _ret.publish_date.Replace(',',' ');
         List<string> al = new List<string>();
 
         foreach (var author in authors)
@@ -155,23 +159,24 @@ internal class Books
     {
         try
         {
-            if (File.Exists(path))
+            if (!File.Exists(path))
             {
-                var lines = File.ReadAllLines(path);
-                List<string> isbn_numbers = new List<string>();
+                Console.WriteLine("No isbn numbers found");
+                return Array.Empty<string>();
+            }   
+            var lines = File.ReadAllLines(path);
+            List<string> isbn_numbers = new List<string>();
 
-                foreach (string line in lines)
+            foreach (string line in lines)
+            {
+                var values = line.Split(separator);
+                foreach (string val in values)
                 {
-                    var values = line.Split(separator);
-                    foreach (string val in values)
-                    {
-                        isbn_numbers.Add(val);
-                    }
+                    isbn_numbers.Add(val);
                 }
-
-                return isbn_numbers.ToArray();
             }
-            return Array.Empty<string>();
+
+            return isbn_numbers.ToArray();
         }
         catch (Exception e)
         {
