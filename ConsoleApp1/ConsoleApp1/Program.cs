@@ -1,7 +1,6 @@
 using Nancy.Json;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
-using File = System.IO.File;
 
 internal class Program
 {
