@@ -53,7 +53,7 @@ internal class Program
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
-            return 0;
+            return -1;
         }
     }
 
