@@ -5,7 +5,7 @@ using File = System.IO.File;
 
 internal class books
 {
- 
+
     private static async Task Main()
     {
         var isbns = get_isbn(@"C:\test\ISBN_Input_File.txt", ',');
@@ -23,16 +23,16 @@ internal class books
             Response r = await GetInfo(isbn);
             if (!r.valid)
                 continue;
-                
+
             string json = await r.response.Content.ReadAsStringAsync();
             var book = saveBook(json, isbn);
             books.Add(book);
-                
-                
+
+
         }
 
         saveCSV(books);
-        
+
     }
 
     private static int saveCSV(List<Book> books)
@@ -81,15 +81,16 @@ internal class books
             Console.WriteLine(e.Message);
             return false;
         }
-     
+
     }
 
     private static async Task<Response> GetInfo(string isbn_number)
     {
         try
         {
-            var r = new Response();
-            r.valid = false;
+            var r = new Response { valid = false};
+            
+
             using (var client = new HttpClient())
             {
                 string url = "https://openlibrary.org/isbn/" + isbn_number + ".json";
@@ -100,16 +101,15 @@ internal class books
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 r.response = await client.GetAsync("");
-                 
+
                 r.valid = r.response.IsSuccessStatusCode;
-               
+
                 return r;
             }
         }
         catch (Exception e)
         {
-            var r = new Response();
-            r.valid = false;
+            var r = new Response { valid = false };
             Console.WriteLine(e.Message);
             return r;
         }
@@ -121,27 +121,34 @@ internal class books
         var serializer = new JavaScriptSerializer();
         dynamic book = serializer.DeserializeObject(json);
 
-        var _ret = new Book();
-
-        _ret.isbn = isbn;
-        _ret.isCache = ENUM.Server;
-        _ret.title = book[0].ContainsKey("title") ? book[0]["title"] : "Not found";
-        _ret.subtitle = book[0].ContainsKey("subtitle") ? book[0]["subtitle"] : "Not found";
-        var authors = book[0]["authors"];
-        _ret.number_of_pages = book[0].ContainsKey("number_of_pages") ? book[0]["number_of_pages"] : 0;
-        _ret.publish_date = book[0].ContainsKey("publish_date") ? book[0]["publish_date"] : "Not found";
-        //_ret.publish_date = _ret.publish_date.Replace(',',' ');
         List<string> al = new List<string>();
 
-        foreach (var author in authors)
+        if (book[0].ContainsKey("authors")) 
         {
-            al.Add(author.ContainsKey("name") ? author["name"] : "");
+            var authors = book[0]["authors"];
+            foreach (var author in authors)
+            {
+                al.Add(author.ContainsKey("name") ? author["name"] : "");
+            }
         }
-        _ret.authors_line = string.Join(";", al);
 
-        return _ret;
+        var _ret = new Book
+        {
 
+            isbn = isbn,
+            isCache = ENUM.Server,
+            title = book[0].ContainsKey("title") ? book[0]["title"] : "Not found",
+            subtitle = book[0].ContainsKey("subtitle") ? book[0]["subtitle"] : "Not found",
+
+            number_of_pages = book[0].ContainsKey("number_of_pages") ? book[0]["number_of_pages"] : 0,
+            publish_date = book[0].ContainsKey("publish_date") ? book[0]["publish_date"] : "Not found",
+            //_ret.publish_date = _ret.publish_date.Replace(',',' ');
+            authors_line = string.Join(";", al)
+        };
+
+        return _ret; 
     }
+
 
     private static int ConsoleLog(Book book)
     {
@@ -167,7 +174,7 @@ internal class books
             {
                 Console.WriteLine("No isbn numbers found");
                 return Array.Empty<string>();
-            }   
+            }
             var lines = File.ReadAllLines(path);
             List<string> isbn_numbers = new List<string>();
 
