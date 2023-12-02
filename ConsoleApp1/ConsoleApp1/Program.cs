@@ -1,4 +1,3 @@
-using Nancy.Diagnostics;
 using Nancy.Json;
 using System.Net.Http.Headers;
 using File = System.IO.File;
@@ -17,12 +16,13 @@ internal class Program
 
             foreach (string isbn in isbns)
             {
-                Book book;
+                
                 if (!getBookCache(ref books, isbn))
                 {
                     Response r = await GetInfo(isbn);
                     if (r.valid & !object.Equals(r.response, null))
                     {
+                        Book book;
                         string json = await r.response.Content.ReadAsStringAsync();
                         book = saveBook(json, isbn);
                         books.Add(book);
@@ -48,10 +48,12 @@ internal class Program
                     ConsoleLog(b);
                 }
             }
+            return;
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
+            return;
         }
     }
 
@@ -84,7 +86,7 @@ internal class Program
     {
         try
         {
-            Response r = new Response();
+            var r = new Response();
             r.valid = false;
             using (var client = new HttpClient())
             {
@@ -105,7 +107,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            Response r = new Response();
+            var r = new Response();
             r.valid = false;
             Console.WriteLine(e.Message);
             return r;
@@ -118,7 +120,7 @@ internal class Program
         var serializer = new JavaScriptSerializer();
         dynamic book = serializer.DeserializeObject(json);
 
-        Book _ret = new Book();
+        var _ret = new Book();
 
         _ret.isbn = isbn;
         _ret.isCache = ENUM.Server;
@@ -152,6 +154,7 @@ internal class Program
         Console.WriteLine(book.number_of_pages);
         Console.WriteLine(book.publish_date);
         Console.WriteLine("-------------------------------------------");
+        return;
     }
 
     private static string[] get_isbn(string path, char separator)
