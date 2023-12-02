@@ -2,11 +2,10 @@ using Nancy.Json;
 using System.Net.Http.Headers;
 using File = System.IO.File;
 
-internal class Program
+internal class Books
 {
-
-
-    private static async Task Main(string[] args)
+ 
+    private static async Task Main()
     {
         var isbns = get_isbn(@"C:\test\ISBN_Input_File.txt", ',');
 
@@ -22,9 +21,8 @@ internal class Program
                     Response r = await GetInfo(isbn);
                     if (r.valid & !object.Equals(r.response, null))
                     {
-                        Book book;
                         string json = await r.response.Content.ReadAsStringAsync();
-                        book = saveBook(json, isbn);
+                        Book book = saveBook(json, isbn);
                         books.Add(book);
                     }
                 }
@@ -64,7 +62,7 @@ internal class Program
             {
                 if (b.isbn == isbn)
                 {
-                    books.Add(new Book() { isbn = isbn, isCache=ENUM.Cache, title=b.title, subtitle = b.subtitle, number_of_pages = b.number_of_pages, publish_date = b.publish_date, authors_line = b.authors_line});
+                    books.Add(new Book { isbn = isbn, isCache=ENUM.Cache, title=b.title, subtitle = b.subtitle, number_of_pages = b.number_of_pages, publish_date = b.publish_date, authors_line = b.authors_line});
 
                     found = true;
                     break;
@@ -90,7 +88,6 @@ internal class Program
             {
                 string url = "https://openlibrary.org/isbn/" + isbn_number + ".json";
                 url = string.Format("https://openlibrary.org/api/books?bibkeys=ISBN:{0}&jscmd=data&format=json", isbn_number);
-                string urlParameters = string.Format("?ISBN={0}&jscmd=data&format=json", isbn_number);
 
                 client.BaseAddress = new Uri(url);
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -152,7 +149,6 @@ internal class Program
         Console.WriteLine(book.number_of_pages);
         Console.WriteLine(book.publish_date);
         Console.WriteLine("-------------------------------------------");
-        return;
     }
 
     private static string[] get_isbn(string path, char separator)
@@ -187,7 +183,7 @@ internal class Program
 
 }
 
-public enum ENUM { Server, Cache };
+public enum ENUM { Server, Cache }
 
 public class Book
 {
