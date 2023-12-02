@@ -31,7 +31,7 @@ internal class books
 
         }
 
-        saveCSV(books);
+        int ret = saveCSV(books);
 
     }
 
@@ -46,7 +46,7 @@ internal class books
                 foreach (Book b in books)
                 {
                     writer.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7}", rowNumber++, b.isCache, b.isbn, b.title, b.subtitle, b.authors_line, b.number_of_pages, b.publish_date));
-                    ConsoleLog(b);
+                    int ret = ConsoleLog(b);
                 }
             }
             return 0;
