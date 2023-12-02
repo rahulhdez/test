@@ -1,8 +1,9 @@
 using Nancy.Json;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using File = System.IO.File;
 
-internal class Books
+internal class books
 {
  
     private static async Task Main()
@@ -34,7 +35,7 @@ internal class Books
         
     }
 
-    private static void saveCSV(List<Book> books)
+    private static int saveCSV(List<Book> books)
     {
         try
         {
@@ -48,10 +49,12 @@ internal class Books
                     ConsoleLog(b);
                 }
             }
+            return 0;
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
+            return 0;
         }
     }
 
@@ -140,7 +143,7 @@ internal class Books
 
     }
 
-    private static void ConsoleLog(Book book)
+    private static int ConsoleLog(Book book)
     {
         Console.WriteLine(book.title);
         Console.WriteLine(book.subtitle);
@@ -153,6 +156,7 @@ internal class Books
         Console.WriteLine(book.number_of_pages);
         Console.WriteLine(book.publish_date);
         Console.WriteLine("-------------------------------------------");
+        return 0;
     }
 
     private static string[] get_isbn(string path, char separator)
