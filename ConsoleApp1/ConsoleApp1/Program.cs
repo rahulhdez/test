@@ -64,9 +64,6 @@ internal class Program
     {
         try
         {
-            if (books.Count <= 0)
-                return false;
-
             foreach (Book b in books)
             {
                 if (b.isbn != isbn)
@@ -90,8 +87,7 @@ internal class Program
     {
         try
         {
-            var r = new Response { valid = false};
-            
+            var r = new Response { };
 
             using (var client = new HttpClient())
             {
@@ -103,9 +99,8 @@ internal class Program
 
                 r.response = await client.GetAsync("");
                 r.valid = r.response.IsSuccessStatusCode;
-
-                return r;
             }
+            return r;
         }
         catch (Exception e)
         {
@@ -134,12 +129,10 @@ internal class Program
 
         var _ret = new Book
         {
-
             isbn = isbn,
             isCache = ENUM.Server,
             title = book[0].ContainsKey("title") ? book[0]["title"] : "Not found",
             subtitle = book[0].ContainsKey("subtitle") ? book[0]["subtitle"] : "Not found",
-
             number_of_pages = book[0].ContainsKey("number_of_pages") ? book[0]["number_of_pages"] : 0,
             publish_date = book[0].ContainsKey("publish_date") ? book[0]["publish_date"] : "Not found",
             //_ret.publish_date = _ret.publish_date.Replace(',',' ');
