@@ -92,15 +92,13 @@ internal class Program
 
             using (var client = new HttpClient())
             {
-                string url = "https://openlibrary.org/isbn/" + isbn_number + ".json";
-                url = string.Format("https://openlibrary.org/api/books?bibkeys=ISBN:{0}&jscmd=data&format=json", isbn_number);
+                string url = string.Format("https://openlibrary.org/api/books?bibkeys=ISBN:{0}&jscmd=data&format=json", isbn_number);
 
                 client.BaseAddress = new Uri(url);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 r.response = await client.GetAsync("");
-
                 r.valid = r.response.IsSuccessStatusCode;
 
                 return r;
@@ -116,7 +114,7 @@ internal class Program
 
     private static Book saveBook(string json, string isbn)
     {
-        //TODO : avoid using keyword dynamic
+
         var serializer = new JavaScriptSerializer();
         dynamic book = serializer.DeserializeObject(json);
 
@@ -202,7 +200,7 @@ public enum ENUM { Server, Cache }
 
 public class Book
 {
-    //TODO : Constructor
+
     public string? isbn { get; set; }
     public ENUM isCache { get; set; }
     public string? title { get; set; }
