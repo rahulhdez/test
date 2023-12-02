@@ -57,28 +57,28 @@ internal class Books
 
     private static bool getBookCache(ref List<Book> books, string isbn)
     {
-        bool found = false;
-        if (books.Count > 0)
+        try
         {
+            if (books.Count <= 0)
+                return false;
+
             foreach (Book b in books)
             {
                 if (b.isbn != isbn)
                     continue;
 
-                books.Add(new Book { isbn = isbn, isCache=ENUM.Cache, title=b.title, subtitle = b.subtitle, number_of_pages = b.number_of_pages, publish_date = b.publish_date, authors_line = b.authors_line});
+                books.Add(new Book { isbn = isbn, isCache = ENUM.Cache, title = b.title, subtitle = b.subtitle, number_of_pages = b.number_of_pages, publish_date = b.publish_date, authors_line = b.authors_line });
 
-                found = true;
-                break;
-
-                
-            }
-            if (found)
                 return true;
-            
+            }
             return false;
         }
-       
-        return false;
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return false;
+        }
+     
     }
 
     private static async Task<Response> GetInfo(string isbn_number)
