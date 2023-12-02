@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "GNJ/EUSBehVPl5sOaz+2cq/bP9O73oLRPeUXF2cYJ5JW3roQWgjF6wqI38AdV2IQtaKhVCr4aPcj1jDT0HYu+A==",
+  "dgSpecHash": "xvJT/1SEZhjy44KXJ40mi/KePuQl4Ixe3f475dsdH9OOYlkjKEaEcC4+rKvzSWzKCeCCa0LasxZBr96ooTo5Ow==",
   "success": true,
-  "projectFilePath": "C:\\test\\books\\ConsoleApp1\\ConsoleApp1\\books.csproj",
+  "projectFilePath": "C:\\test\\isbn_books\\test\\ConsoleApp1\\ConsoleApp1\\books.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\usr\\.nuget\\packages\\microsoft.dotnet.platformabstractions\\2.0.4\\microsoft.dotnet.platformabstractions.2.0.4.nupkg.sha512",
     "C:\\Users\\usr\\.nuget\\packages\\microsoft.extensions.dependencymodel\\2.0.4\\microsoft.extensions.dependencymodel.2.0.4.nupkg.sha512",

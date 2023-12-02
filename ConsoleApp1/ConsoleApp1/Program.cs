@@ -7,7 +7,7 @@ internal class Program
 
     private static async Task Main()
     {
-        var isbns = get_isbn(@"C:\test\ISBN_Input_File.txt", ',');
+        var isbns = readISBN(@"C:\test\ISBN_Input_File.txt", ',');
 
         if (isbns.Length <= 0)
             return;
@@ -19,12 +19,15 @@ internal class Program
             if (getBookCache(ref books, isbn))
                 continue;
 
-            Response r = await GetInfo(isbn);
+            Response r = await getOpenLibraryBook(isbn);
             if (!r.valid)
                 continue;
 
+            if(object.Equals(r.response,null))
+                continue;
+
             string json = await r.response.Content.ReadAsStringAsync();
-            var book = saveBook(json, isbn);
+            var book = readBookInfo(json, isbn);
             books.Add(book);
 
 
@@ -83,7 +86,7 @@ internal class Program
 
     }
 
-    private static async Task<Response> GetInfo(string isbn_number)
+    private static async Task<Response> getOpenLibraryBook(string isbn_number)
     {
         try
         {
@@ -112,7 +115,7 @@ internal class Program
         }
     }
 
-    private static Book saveBook(string json, string isbn)
+    private static Book readBookInfo(string json, string isbn)
     {
 
         var serializer = new JavaScriptSerializer();
@@ -149,21 +152,32 @@ internal class Program
 
     private static int ConsoleLog(Book book)
     {
-        Console.WriteLine(book.title);
-        Console.WriteLine(book.subtitle);
-        Console.WriteLine(book.isCache);
-        foreach (var author in book.authors_line.Split(";"))
+        try
         {
-            Console.WriteLine(author);
-        }
+            Console.WriteLine(book.title);
+            Console.WriteLine(book.isCache);
+            Console.WriteLine(book.subtitle);
 
-        Console.WriteLine(book.number_of_pages);
-        Console.WriteLine(book.publish_date);
-        Console.WriteLine("-------------------------------------------");
-        return 0;
+            if (!object.Equals(book.authors_line, null)){
+                foreach (var author in book.authors_line.Split(";"))
+                {
+                    Console.WriteLine(author);
+                }
+            }
+
+            Console.WriteLine(book.number_of_pages);
+            Console.WriteLine(book.publish_date);
+            Console.WriteLine("-------------------------------------------");
+            return 0;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return -1;
+        }
     }
 
-    private static string[] get_isbn(string path, char separator)
+    private static string[] readISBN(string path, char separator)
     {
         try
         {
