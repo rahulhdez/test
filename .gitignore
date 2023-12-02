@@ -1,0 +1,12 @@
+﻿################################################################################
+# Este archivo .gitignore ha sido creado automáticamente por Microsoft(R) Visual Studio.
+################################################################################
+
+/ConsoleApp1/ConsoleApp1/obj/Release/net8.0
+/.vs/test/FileContentIndex
+*.wsuo
+*.json
+*.sqlite
+/ConsoleApp1/ConsoleApp1/obj/Debug/net8.0/books.assets.cache
+/ConsoleApp1/ConsoleApp1/obj/Debug/net8.0/books.csproj.AssemblyReference.cache
+/ConsoleApp1/ConsoleApp1/obj/Debug/net8.0/books.GeneratedMSBuildEditorConfig.editorconfig
