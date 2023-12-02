@@ -19,10 +19,10 @@ internal class Books
                 if (!getBookCache(ref books, isbn))
                 {
                     Response r = await GetInfo(isbn);
-                    if (r.valid & !object.Equals(r.response, null))
+                    if (r.valid)
                     {
                         string json = await r.response.Content.ReadAsStringAsync();
-                        Book book = saveBook(json, isbn);
+                        var book = saveBook(json, isbn);
                         books.Add(book);
                     }
                 }
