@@ -48,12 +48,10 @@ internal class Program
                     ConsoleLog(b);
                 }
             }
-            return;
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
-            return;
         }
     }
 
@@ -75,11 +73,11 @@ internal class Program
             }
             if (found)
                 return true;
-            else
-                return false;
-        }
-        else
+            
             return false;
+        }
+       
+        return false;
     }
 
     private static async Task<Response> GetInfo(string isbn_number)
@@ -90,8 +88,8 @@ internal class Program
             r.valid = false;
             using (var client = new HttpClient())
             {
-                string url = @"https://openlibrary.org/isbn/" + isbn_number + ".json";
-                url = string.Format(@"https://openlibrary.org/api/books?bibkeys=ISBN:{0}&jscmd=data&format=json", isbn_number);
+                string url = "https://openlibrary.org/isbn/" + isbn_number + ".json";
+                url = string.Format("https://openlibrary.org/api/books?bibkeys=ISBN:{0}&jscmd=data&format=json", isbn_number);
                 string urlParameters = string.Format("?ISBN={0}&jscmd=data&format=json", isbn_number);
 
                 client.BaseAddress = new Uri(url);
