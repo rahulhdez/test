@@ -125,9 +125,6 @@ internal class Program
         dynamic book = serializer.DeserializeObject(json);
         List<string> al = new List<string>();
 
-        if (book.Count <= 0)
-            return new Book { };
-
         if (book[0].ContainsKey("authors")) 
         {
             var authors = book[0]["authors"];
