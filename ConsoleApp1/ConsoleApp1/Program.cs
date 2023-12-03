@@ -1,4 +1,6 @@
 using Nancy.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 
@@ -37,26 +39,33 @@ internal class Program
 
     }
 
-    private static int saveCSV(List<Book> books)
+    private static string[] readISBN(string path, char separator)
     {
         try
         {
-            string outputfile = @"c:\test\ISBN_Output_File.csv";
-            using (StreamWriter writer = new StreamWriter(new FileStream(outputfile, FileMode.Create, FileAccess.Write)))
+            if (!File.Exists(path))
             {
-                int rowNumber = 1;
-                foreach (Book b in books)
+                Console.WriteLine("No isbn numbers found");
+                return Array.Empty<string>();
+            }
+            var lines = File.ReadAllLines(path);
+            List<string> isbn_numbers = new List<string>();
+
+            foreach (string line in lines)
+            {
+                var values = line.Split(separator);
+                foreach (string val in values)
                 {
-                    writer.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7}", rowNumber++, b.isCache, b.isbn, b.title, b.subtitle, b.authors_line, b.number_of_pages, b.publish_date));
-                    ConsoleLog(b);
+                    isbn_numbers.Add(val);
                 }
             }
-            return 0;
+
+            return isbn_numbers.ToArray();
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
-            return -1;
+            return Array.Empty<string>();
         }
     }
 
@@ -112,11 +121,12 @@ internal class Program
 
     private static Book readBookInfo(string json, string isbn)
     {
-
         var serializer = new JavaScriptSerializer();
         dynamic book = serializer.DeserializeObject(json);
-
         List<string> al = new List<string>();
+
+        if (book.Count <= 0)
+            return new Book { };
 
         if (book[0].ContainsKey("authors")) 
         {
@@ -142,6 +152,28 @@ internal class Program
         return _ret; 
     }
 
+    private static int saveCSV(List<Book> books)
+    {
+        try
+        {
+            string outputfile = @"c:\test\ISBN_Output_File.csv";
+            using (StreamWriter writer = new StreamWriter(new FileStream(outputfile, FileMode.Create, FileAccess.Write)))
+            {
+                int rowNumber = 1;
+                foreach (Book b in books)
+                {
+                    writer.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7}", rowNumber++, b.isCache, b.isbn, b.title, b.subtitle, b.authors_line, b.number_of_pages, b.publish_date));
+                    ConsoleLog(b);
+                }
+            }
+            return 0;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return -1;
+        }
+    }
 
     private static int ConsoleLog(Book book)
     {
@@ -167,36 +199,6 @@ internal class Program
         {
             Console.WriteLine(e.Message);
             return -1;
-        }
-    }
-
-    private static string[] readISBN(string path, char separator)
-    {
-        try
-        {
-            if (!File.Exists(path))
-            {
-                Console.WriteLine("No isbn numbers found");
-                return Array.Empty<string>();
-            }
-            var lines = File.ReadAllLines(path);
-            List<string> isbn_numbers = new List<string>();
-
-            foreach (string line in lines)
-            {
-                var values = line.Split(separator);
-                foreach (string val in values)
-                {
-                    isbn_numbers.Add(val);
-                }
-            }
-
-            return isbn_numbers.ToArray();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-            return Array.Empty<string>();
         }
     }
 
