@@ -204,7 +204,7 @@ internal class Program
 
             Console.WriteLine(book.number_of_pages);
             Console.WriteLine(book.publish_date);
-            Console.WriteLine("-------------------------------------------");
+            Console.WriteLine("------------------------------------------");
             return 0;
         }
         catch (Exception e)
