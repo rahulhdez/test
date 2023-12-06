@@ -1,8 +1,9 @@
-using Nancy.Json;
+using ebooks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
+
 
 internal class Program
 {
@@ -25,18 +26,17 @@ internal class Program
             if (!r.valid)
                 continue;
 
-            if(object.Equals(r.response,null))
+            if (object.Equals(r.response, null))
                 continue;
 
             string json = await r.response.Content.ReadAsStringAsync();
             var book = readBookInfo(json, isbn);
-            books.Add(book);
 
+            if (book.isValid)
+                books.Add(book);
 
         }
-
         saveCSV(books);
-
     }
 
     private static string[] readISBN(string path, char separator)
@@ -48,18 +48,15 @@ internal class Program
                 Console.WriteLine("No isbn numbers found");
                 return Array.Empty<string>();
             }
+
             var lines = File.ReadAllLines(path);
+            
             List<string> isbn_numbers = new List<string>();
 
             foreach (string line in lines)
-            {
-                var values = line.Split(separator);
-                foreach (string val in values)
-                {
+                foreach (string val in line.Split(separator))
                     isbn_numbers.Add(val);
-                }
-            }
-
+  
             return isbn_numbers.ToArray();
         }
         catch (Exception e)
@@ -100,7 +97,7 @@ internal class Program
 
             using (var client = new HttpClient())
             {
-                string url = string.Format("https://openlibrary.org/api/books?bibkeys=ISBN:{0}&jscmd=data&format=json", isbn_number);
+                string url = $"https://openlibrary.org/api/books?bibkeys=ISBN:{isbn_number}&jscmd=data&format=json";
 
                 client.BaseAddress = new Uri(url);
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -121,32 +118,49 @@ internal class Program
 
     private static Book readBookInfo(string json, string isbn)
     {
-        var serializer = new JavaScriptSerializer();
-        dynamic book = serializer.DeserializeObject(json);
-        List<string> al = new List<string>();
-
-        if (book[0].ContainsKey("authors")) 
+        try
         {
-            var authors = book[0]["authors"];
-            foreach (var author in authors)
+            var _Json = JObject.Parse(json);
+            var _JsonParsed = _Json.Properties().First();
+            var eBook = _JsonParsed.Value.ToObject<eBook>();
+
+            //var serializer = new JavaScriptSerializer();
+            //dynamic book = serializer.DeserializeObject(json);
+
+            List<string> al = new List<string>();
+
+            //if (book[0].ContainsKey("authors"))
+            //{
+            //    var authors = book[0]["authors"];
+            //    foreach (var author in authors)
+            //    {
+            //        al.Add(author.ContainsKey("name") ? author["name"] : "");
+            //    }
+            //}
+
+            if (eBook != null) 
+                eBook.authors.ForEach(author => al.Add(!object.Equals(author.name, null) ? author.name : "NA"));
+
+            var _ret = new Book
             {
-                al.Add(author.ContainsKey("name") ? author["name"] : "");
-            }
+                isbn = isbn,
+                isCache = ENUM.Server,
+                title = !object.Equals(eBook.title, null) ? eBook.title : "NA", // book[0].ContainsKey("title") ? book[0]["title"] : "Not found",
+                subtitle = !object.Equals(eBook.subtitle, null) ? eBook.subtitle : "NA", //book[0].ContainsKey("subtitle") ? book[0]["subtitle"] : "Not found",
+                number_of_pages = !object.Equals(eBook.number_of_pages, null) ? eBook.number_of_pages : 0, //book[0].ContainsKey("number_of_pages") ? book[0]["number_of_pages"] : 0,
+                publish_date = !object.Equals(eBook.publish_date, null) ? eBook.publish_date : "NA",//book[0].ContainsKey("publish_date") ? book[0]["publish_date"] : "Not found",
+                //_ret.publish_date = _ret.publish_date.Replace(',',' ');
+                authors_line = string.Join(";", al),
+                isValid = true
+            };
+
+            return _ret;
         }
-
-        var _ret = new Book
+        catch (Exception e)
         {
-            isbn = isbn,
-            isCache = ENUM.Server,
-            title = book[0].ContainsKey("title") ? book[0]["title"] : "Not found",
-            subtitle = book[0].ContainsKey("subtitle") ? book[0]["subtitle"] : "Not found",
-            number_of_pages = book[0].ContainsKey("number_of_pages") ? book[0]["number_of_pages"] : 0,
-            publish_date = book[0].ContainsKey("publish_date") ? book[0]["publish_date"] : "Not found",
-            //_ret.publish_date = _ret.publish_date.Replace(',',' ');
-            authors_line = string.Join(";", al)
-        };
-
-        return _ret; 
+            Console.WriteLine(e.Message);
+            return new Book { isValid = false };
+        }
     }
 
     private static int saveCSV(List<Book> books)
@@ -180,7 +194,8 @@ internal class Program
             Console.WriteLine(book.isCache);
             Console.WriteLine(book.subtitle);
 
-            if (!object.Equals(book.authors_line, null)){
+            if (!object.Equals(book.authors_line, null))
+            {
                 foreach (var author in book.authors_line.Split(";"))
                 {
                     Console.WriteLine(author);
@@ -214,8 +229,7 @@ public class Book
     public long? number_of_pages { get; set; }
     public string? publish_date { get; set; }
     public string? authors_line { get; set; }
-
-
+    public bool isValid { get; set; }
 
 }
 
